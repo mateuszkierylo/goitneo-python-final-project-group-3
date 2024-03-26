@@ -99,10 +99,9 @@ class AddressBook(UserDict):
         with open(filename, 'wb') as file:
             pickle.dump(self.data, file)
 
-    def get_birthdays_per_week(self):
+    def get_birthdays_per_week(self,threshold=7):
         birthday_dict = {"Monday": [], "Tuesday": [], "Wednesday": [], "Thursday": [], "Friday": []}
         today = datetime.today().date()
-        next_week = today + timedelta(days=7)
 
         for name, record in self.data.items():
             if record.birthday:
@@ -114,7 +113,7 @@ class AddressBook(UserDict):
 
                 delta_days = (birthday_this_year - today).days
 
-                day_of_week = (today + timedelta(days=delta_days)).strftime("%A") if 0 <= delta_days < 7 else None
+                day_of_week = (today + timedelta(days=delta_days)).strftime("%A") if 0 <= delta_days < threshold else None
 
                 if day_of_week in ["Saturday", "Sunday"]:
                     day_of_week = "Monday"
@@ -123,12 +122,12 @@ class AddressBook(UserDict):
                     birthday_dict[day_of_week].append(name)
 
         if any(birthday_dict.values()):
-            print("Birthdays in the next week:")
+            print(f"Birthdays in the next {threshold} days:")
             for day, names in birthday_dict.items():
                 if names:
                     print(f"{day}: {', '.join(names)}")
         else:
-            print("No birthdays in the next week.")
+            print(f"No birthdays in the {threshold} days.")
 
 
 #Function to load the address book from file
@@ -257,7 +256,15 @@ while True:
             print("Invalid command format. Use 'show-birthday [name]'")
 
     elif cmd == "birthdays":
-        book.get_birthdays_per_week()
+        try:
+            if args:
+                threshold=int(args[0])
+                book.get_birthdays_per_week(threshold)
+            else:
+                book.get_birthdays_per_week()
+        except ValueError as e:
+            print(e)
+            print("Invalid command format. Use 'birthdays [int]'")
 
     elif cmd == "hello":
         print("Hello!")
