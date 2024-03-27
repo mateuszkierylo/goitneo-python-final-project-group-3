@@ -12,17 +12,12 @@ class Field:
     def __str__(self):
         return str(self.value)
 
-#test 
-
-
-'''
 class Name(Field):
     def __init__(self, value):
         if value:  
             self.value = value
         else:
             raise ValueError("Name field is required")
-'''
 
 class Phone(Field):
     def __init__(self, value):
