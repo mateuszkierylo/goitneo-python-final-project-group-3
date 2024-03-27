@@ -300,8 +300,13 @@ while True:
                 print(e)
                 print("Invalid command format. Use 'birthdays [int]'")
 
-    elif cmd == "hello":
-        print("Hello!")
+    elif fuzz.ratio(cmd,"hello")>79:
+        
+        if fuzz.ratio(cmd,"hello")<100:
+            is_ok = input("Did you mean to enter 'hello'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"birthdays")==100 or is_ok == "y":
+            print("Hello!")
     
     elif cmd == "close" or cmd == "exit":
         book.save_to_file('addressbook.dat')
