@@ -28,7 +28,14 @@ class Phone(Field):
     
     def validate_phone(self, phone):
         return len(str(phone)) == 10
+
+class Adress(Field):
+    def __init__(self, value):
+        self.value = value
     
+class Email(Field):
+    pass
+
 class Birthday(Field):
     def __init__(self, value):
         if self.validate_birthday(value):
@@ -46,8 +53,14 @@ class Birthday(Field):
 class Record:
     def __init__(self, name):
         self.name = Name(name)
+        self.adress = []
         self.phones = []
+        self.email =[]
         self.birthday = None
+
+
+    def add_adress(self, adress):
+        self.adress.append(Adress(adress))
 
     def add_birthday(self, birthday):
         self.birthday = Birthday(birthday)
@@ -74,7 +87,8 @@ class Record:
     def __str__(self):
         phone_str = "; ".join(str(phone) for phone in self.phones)
         birthday_str = f", Birthday: {self.birthday.value}" if self.birthday else ""
-        return f"Contact name: {self.name.value}, phones: {phone_str}{birthday_str}"
+        address_str = ", Addresses: " + ", ".join(str(address.value) for address in self.adress)
+        return f"Contact name: {self.name.value}, phones: {phone_str}{birthday_str}{address_str}"
 
 class AddressBook(UserDict):
     def add_record(self, record):
@@ -235,6 +249,24 @@ while True:
         except ValueError as e:
             print(e)
             print("Invalid command format. Use 'add-birthday [name] [birth date]'")
+
+    elif cmd == "add-adress":
+        try:
+            name, adress = args
+            record = book.find(name)
+            if record:
+                record.add_adress(adress)
+                print(f"Address added to contact {name}")
+            else:
+                print(f"Contact {name} not found") 
+        
+        except ValueError as e:
+            print(e)
+            print("Invalid command format. '")
+
+
+
+
 
     elif cmd == "show-birthday":
         try:
