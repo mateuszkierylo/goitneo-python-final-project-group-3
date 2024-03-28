@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 import pickle
 import re
 
-
 class Field:
     def __init__(self, value):
         self.value = value
@@ -77,7 +76,7 @@ class Record:
         note_str = f", Note: {self.note}" if self.note else ""
         return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{note_str}"
 
-    #NEW: methods to manage notes
+
     def add_note(self, note):
         self.note = Note(note)
 
@@ -140,6 +139,7 @@ class AddressBook(UserDict):
                     print(f"{day}: {', '.join(names)}")
         else:
             print(f"No birthdays in the {threshold} days.")
+
     
     # new function 
     def find_by_note(self, pattern):
@@ -148,6 +148,7 @@ class AddressBook(UserDict):
             if record.note and re.search(pattern, record.note, re.IGNORECASE):
                 matching_contacts.append(name)
         return matching_contacts
+
 
 
 #Function to load the address book from file
@@ -285,7 +286,7 @@ while True:
         except ValueError as e:
             print(e)
             print("Invalid command format. Use 'birthdays [int]'")
-    
+
     elif cmd == "add-note":
         try:
             name, *note = args
@@ -345,6 +346,7 @@ while True:
                 print(f"Invalid regex pattern: {e}")
         else:
             print("Invalid command format. Use 'find_by_note [regex pattern]'")
+
 
     elif cmd == "hello":
         print("Hello!")
