@@ -1,10 +1,8 @@
 from collections import UserDict
 from datetime import datetime, timedelta
 import pickle
+import re
 
-
-
-#Classes
 class Field:
     def __init__(self, value):
         self.value = value
@@ -78,6 +76,22 @@ class Record:
         note_str = f", Note: {self.note}" if self.note else ""
         return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{note_str}"
 
+
+    def add_note(self, note):
+        self.note = Note(note)
+
+    def edit_note(self, note):
+        if self.note:
+            self.note.value = note
+        else:
+            print("No note to edit. Please add a note first")
+
+    def search_note(self, index):
+        pass
+
+    def remove_note(self):
+        self.note = None
+
 class AddressBook(UserDict):
     def add_record(self, record):
         self.data[record.name.value] = record
@@ -125,6 +139,16 @@ class AddressBook(UserDict):
                     print(f"{day}: {', '.join(names)}")
         else:
             print(f"No birthdays in the {threshold} days.")
+
+    
+    # new function 
+    def find_by_note(self, pattern):
+        matching_contacts = []
+        for name, record in self.data.items():
+            if record.note and re.search(pattern, record.note, re.IGNORECASE):
+                matching_contacts.append(name)
+        return matching_contacts
+
 
 
 #Function to load the address book from file
@@ -262,6 +286,67 @@ while True:
         except ValueError as e:
             print(e)
             print("Invalid command format. Use 'birthdays [int]'")
+
+    elif cmd == "add-note":
+        try:
+            name, *note = args
+            note = " ".join(note)
+            record = book.find(name)
+            if record:
+                record.add_note(note)
+                print(f"Note added for contact {name}")
+            else:
+                print(f"Contact {name} not found")
+
+        except ValueError as e:
+            print(e)
+            print("Invalid command format. Use 'add-note [name] [note]'")
+
+    elif cmd == "edit-note":
+        try:
+            name, *note = args
+            note = " ".join(note)
+            record = book.find(name)
+            if record:
+                 record.edit_note(note)
+                 print(f"Note edited for contact {name}")
+            else:
+                print(f"Contact {name} not found")
+
+        except ValueError as e:
+            print(e)
+            print("Invalid command format. Use 'edit-note [name] [new note]")
+
+    elif cmd == "remove-note":
+        try:
+            name = args[0]
+            record = book.find(name)
+            if record:
+                record.remove_note()
+                print(f"Note removed for contact {name}")
+            else:
+                print(f"Contact {name} not found")
+
+        except ValueError as e:
+            print(e)
+            print("Invalid command format. Use 'remove-note [name]")
+    
+    elif cmd == "find_by_note":
+        if args:
+            pattern = " ".join(args)
+            try:
+                matching_contacts = book.find_by_note(pattern)
+                if matching_contacts:
+                    print("Contacts with matching note content:")
+                    for name in matching_contacts:
+                        print(name)
+                else:
+                    print("No contacts found with the given note content.")
+            except re.error as e:
+                print(f"Invalid regex pattern: {e}")
+        else:
+            print("Invalid command format. Use 'find_by_note [regex pattern]'")
+
 
     elif cmd == "hello":
         print("Hello!")
