@@ -42,12 +42,17 @@ class Birthday(Field):
             return True
         except ValueError:
             return False
+        
+class Note(Field):
+    def __init__(self, value):
+        super().__init__(value)
 
 class Record:
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
         self.birthday = None
+        self.notes = [] 
 
     def add_birthday(self, birthday):
         self.birthday = Birthday(birthday)
@@ -75,6 +80,22 @@ class Record:
         phone_str = "; ".join(str(phone) for phone in self.phones)
         birthday_str = f", Birthday: {self.birthday.value}" if self.birthday else ""
         return f"Contact name: {self.name.value}, phones: {phone_str}{birthday_str}"
+    
+    #NEW: methods to manage notes
+    def add_note(self, note):
+        self.note = Note(note)
+
+    def edit_note(self, note):
+        if self.note:
+            self.note.value = note
+        else:
+            print("No note to edit. Please add a note first")
+    
+    def search_note(self, index):
+        pass
+    
+    def remove_note(self):
+        self.note = None
 
 class AddressBook(UserDict):
     def add_record(self, record):
@@ -246,6 +267,7 @@ while True:
                 print(f"No birthday set for {name}")
             else: 
                 print(f"Contact {name} not found.")
+
         except IndexError as e:
             print(e)
             print("Invalid command format. Use 'show-birthday [name]'")
@@ -257,10 +279,56 @@ while True:
                 book.get_birthdays_per_week(threshold)
             else:
                 book.get_birthdays_per_week()
+
         except ValueError as e:
             print(e)
             print("Invalid command format. Use 'birthdays [int]'")
 
+    elif cmd == "add-note":
+        try:
+            name, *note = args
+            note = " ".join(note)
+            record = book.find(name)
+            if record:
+                record.add_note(note)
+                print(f"Note added for contact {name}")
+            else:
+                print(f"Contact {name} not found")
+
+        except ValueError as e:
+            print(e)
+            print("Invalid command format. Use 'add-note [name] [note]'")
+
+    elif cmd == "edit-note":
+        try:
+            name, *note = args
+            note = " ".join(note)
+            record = book.find(name)
+            if record:
+                 record.edit_note(note)
+                 print(f"Note edited for contact {name}")
+            else:
+                print(f"Contact {name} not found")
+
+        except ValueError as e:
+            print(e)
+            print("Invalid command format. Use 'edit-note [name] [new note]")
+
+    elif cmd == "remove-note":
+        try:
+            name = args[0]
+            record = book.find(name)
+            if record:
+                record.remove_note()
+                print(f"Note removed for contact {name}")
+            else:
+                print(f"Contact {name} not found")
+
+        except ValueError as e:
+            print(e)
+            print("Invalid command format. Use 'remove-note [name]")
+
+    
     elif cmd == "hello":
         print("Hello!")
     
