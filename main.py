@@ -90,9 +90,6 @@ class Record:
         else:
             print("No note to edit. Please add a note first")
 
-    def search_note(self, index):
-        pass
-
     def remove_note(self):
         self.note = None
 
