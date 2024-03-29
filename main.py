@@ -1,6 +1,7 @@
 from collections import UserDict
 from datetime import datetime, timedelta
 import pickle
+from fuzzywuzzy import fuzz
 import re
 
 class Field:
@@ -184,173 +185,303 @@ while True:
     user_input = input("Enter command: ").strip()
     cmd, args = parse_input(user_input)
 
-    if cmd == "add":
-        try:
-            name, phone = args
-            record = Record(name)
-            record.add_phone(phone)
-            book.add_record(record)
-            print(f"Contact {name} added with phone number {phone}")
-
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. Use 'add [name] [phone]'")
-
-    
-    elif cmd == "remove_phone":
-        try:
-            name, phone = args
-            record = book.find(name)
-            if record:
-                phone_found = record.find_phone(phone)
-                if phone_found:
-                    record.remove_phone(phone)
-                    print(f"Phone number {phone} removed for contact {name}.")
-                else:
-                    print(f"Phone number {phone} not found for contact {name}.")
-            else:
-                print(f"Contact {name} not found.")
-
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. Use 'remove-phone [name] [phone]'")
-
-
-    elif cmd == "change":
-        try:
-            name, new_phone = args
-            record = book.find(name)
-            if record:
-                record.edit_phone(record.phones[0].value, new_phone)
-                print(f"Phone number changed for contact {name}")
-            else:
-                print(f"Contact not found")
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. Use 'change [name] [new phone]'")
-
-    elif cmd == "phone":
-        try:
-            name = args[0]
-            record = book.find(name)
-            if record:
-                print(f"Phone number for {name}: {record.phones[0]}")
-            else:
-                print(f"Contact {name} not found.")
-        except IndexError as e:
-            print(e)
-            print("Invalid command format. Use 'phone [name]'")
-
-    elif cmd == "all":
-        if book.data:
-            print("All contacts:")
-            for record in book.data.values():
-                print(record)
-        else:
-            print("No contacts in the address book.")
-
-    elif cmd == "add-birthday":
-        try:
-            name, birthday = args
-            record = book.find(name)
-            if record:
-                record.add_birthday(birthday)
-                print(f"Birthday added for contact {name}")
-            else:
-                print(f"Contact {name} not found")
-                
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. Use 'add-birthday [name] [birth date]'")
-
-    elif cmd == "show-birthday":
-        try:
-            name = args[0]
-            record = book.find(name)
-            if record and record.birthday:
-                print(f"Birthday for {name}: {record.birthday}")
-            elif record and not record.birthday:
-                print(f"No birthday set for {name}")
-            else: 
-                print(f"Contact {name} not found.")
-        except IndexError as e:
-            print(e)
-            print("Invalid command format. Use 'show-birthday [name]'")
-
-    elif cmd == "birthdays":
-        try:
-            if args:
-                threshold=int(args[0])
-                book.get_birthdays_per_week(threshold)
-            else:
-                book.get_birthdays_per_week()
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. Use 'birthdays [int]'")
-
-    elif cmd == "add-note":
-        try:
-            name, *note = args
-            note = " ".join(note)
-            record = book.find(name)
-            if record:
-                record.add_note(note)
-                print(f"Note added for contact {name}")
-            else:
-                print(f"Contact {name} not found")
-
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. Use 'add-note [name] [note]'")
-
-    elif cmd == "edit-note":
-        try:
-            name, *note = args
-            note = " ".join(note)
-            record = book.find(name)
-            if record:
-                 record.edit_note(note)
-                 print(f"Note edited for contact {name}")
-            else:
-                print(f"Contact {name} not found")
-
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. Use 'edit-note [name] [new note]")
-
-    elif cmd == "remove-note":
-        try:
-            name = args[0]
-            record = book.find(name)
-            if record:
-                record.remove_note()
-                print(f"Note removed for contact {name}")
-            else:
-                print(f"Contact {name} not found")
-
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. Use 'remove-note [name]")
-    
-    elif cmd == "find_by_note":
-        if args:
-            pattern = " ".join(args)
+    if fuzz.ratio(cmd,"add")>66:
+        
+        if fuzz.ratio(cmd,"add")<100:
+            is_ok = input("Did you mean to enter 'add [name] [phone]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"add")==100 or is_ok == "y":     
             try:
-                matching_contacts = book.find_by_note(pattern)
-                if matching_contacts:
-                    print("Contacts with matching note content:")
-                    for name in matching_contacts:
-                        print(name)
+                name, phone = args
+                record = Record(name)
+                record.add_phone(phone)
+                book.add_record(record)
+                print(f"Contact {name} added with phone number {phone}")
+
+            except ValueError as e:
+                print(e)
+                print("Invalid command format. Use 'add [name] [phone]'")
+
+    elif fuzz.ratio(cmd,"remove_phone")>91:
+        
+        if fuzz.ratio(cmd,"remove_phone")<100:
+            is_ok = input("Did you mean to enter 'remove-phone [name] [phone]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"remove_phone")==100 or is_ok == "y":  
+            try:
+                name, phone = args
+                record = book.find(name)
+                if record:
+                    phone_found = record.find_phone(phone)
+                    if phone_found:
+                        record.remove_phone(phone)
+                        print(f"Phone number {phone} removed for contact {name}.")
+                    else:
+                        print(f"Phone number {phone} not found for contact {name}.")
                 else:
-                    print("No contacts found with the given note content.")
-            except re.error as e:
-                print(f"Invalid regex pattern: {e}")
-        else:
-            print("Invalid command format. Use 'find_by_note [regex pattern]'")
+                    print(f"Contact {name} not found.")
 
+            except ValueError as e:
+                print(e)
+                print("Invalid command format. Use 'remove-phone [name] [phone]'")
 
-    elif cmd == "hello":
-        print("Hello!")
+    elif fuzz.ratio(cmd,"change")>82:
+        
+        if fuzz.ratio(cmd,"change")<100:
+            is_ok = input("Did you mean to enter 'change [name] [new phone]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"change")==100 or is_ok == "y":  
+            try:
+                name, new_phone = args
+                record = book.find(name)
+                if record:
+                    record.edit_phone(record.phones[0].value, new_phone)
+                    print(f"Phone number changed for contact {name}")
+                else:
+                    print(f"Contact not found")
+            except ValueError as e:
+                print(e)
+                print("Invalid command format. Use 'change [name] [new phone]'")
+
+    elif fuzz.ratio(cmd,"phone")>79:
+        
+        if fuzz.ratio(cmd,"phone")<100:
+            is_ok = input("Did you mean to enter 'phone [name]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"phone")==100 or is_ok == "y": 
+            try:
+                name = args[0]
+                record = book.find(name)
+                if record:
+                    print(f"Phone number for {name}: {record.phones[0]}")
+                else:
+                    print(f"Contact {name} not found.")
+            except IndexError as e:
+                print(e)
+                print("Invalid command format. Use 'phone [name]'")
+
+    elif fuzz.ratio(cmd,"all")>66:
+        
+        if fuzz.ratio(cmd,"all")<100:
+            is_ok = input("Did you mean to enter 'all'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"all")==100 or is_ok == "y":
+            if book.data:
+                print("All contacts:")
+                for record in book.data.values():
+                    print(record)
+            else:
+                print("No contacts in the address book.")
+
+    elif fuzz.ratio(cmd,"add-birthday")>91:
+        
+        if fuzz.ratio(cmd,"add-birthday")<100:
+            is_ok = input("Did you mean to enter 'add-birthday [name] [birth date]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"add-birthday")==100 or is_ok == "y":
+            try:
+                name, birthday = args
+                record = book.find(name)
+                if record:
+                    record.add_birthday(birthday)
+                    print(f"Birthday added for contact {name}")
+                else:
+                    print(f"Contact {name} not found")
+                    
+            except ValueError as e:
+                print(e)
+                print("Invalid command format. Use 'add-birthday [name] [birth date]'")
+
+    elif fuzz.ratio(cmd,"show-birthday")>91:
+        
+        if fuzz.ratio(cmd,"show-birthday")<100:
+            is_ok = input("Did you mean to enter 'show-birthday [name]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"show-birthday")==100 or is_ok == "y":
+            try:
+                name = args[0]
+                record = book.find(name)
+                if record and record.birthday:
+                    print(f"Birthday for {name}: {record.birthday}")
+                elif record and not record.birthday:
+                    print(f"No birthday set for {name}")
+                else: 
+                    print(f"Contact {name} not found.")
+            except IndexError as e:
+                print(e)
+                print("Invalid command format. Use 'show-birthday [name]'")
+
+    elif fuzz.ratio(cmd,"birthdays")>88:
+        
+        if fuzz.ratio(cmd,"birthdays")<100:
+            is_ok = input("Did you mean to enter 'birthdays [int]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"birthdays")==100 or is_ok == "y":
+            try:
+                if args:
+                    threshold=int(args[0])
+                    book.get_birthdays_per_week(threshold)
+                else:
+                    book.get_birthdays_per_week()
+            except ValueError as e:
+                print(e)
+                print("Invalid command format. Use 'birthdays [int]'")
+
+    elif fuzz.ratio(cmd,"hello")>79:
+        
+        if fuzz.ratio(cmd,"hello")<100:
+            is_ok = input("Did you mean to enter 'hello'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"birthdays")==100 or is_ok == "y":
+            print("Hello!")
+
+    elif fuzz.ratio(cmd,"all")>66:
+        
+        if fuzz.ratio(cmd,"all")<100:
+            is_ok = input("Did you mean to enter 'all'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"all")==100 or is_ok == "y":
+            if book.data:
+                print("All contacts:")
+                for record in book.data.values():
+                    print(record)
+            else:
+                print("No contacts in the address book.")
+
+    elif fuzz.ratio(cmd,"add-birthday")>91:
+        
+        if fuzz.ratio(cmd,"add-birthday")<100:
+            is_ok = input("Did you mean to enter 'add-birthday [name] [birth date]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"add-birthday")==100 or is_ok == "y":
+            try:
+                name, birthday = args
+                record = book.find(name)
+                if record:
+                    record.add_birthday(birthday)
+                    print(f"Birthday added for contact {name}")
+                else:
+                    print(f"Contact {name} not found")
+                    
+            except ValueError as e:
+                print(e)
+                print("Invalid command format. Use 'add-birthday [name] [birth date]'")
+
+    elif fuzz.ratio(cmd,"show-birthday")>91:
+        
+        if fuzz.ratio(cmd,"show-birthday")<100:
+            is_ok = input("Did you mean to enter 'show-birthday [name]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"show-birthday")==100 or is_ok == "y":
+            try:
+                name = args[0]
+                record = book.find(name)
+                if record and record.birthday:
+                    print(f"Birthday for {name}: {record.birthday}")
+                elif record and not record.birthday:
+                    print(f"No birthday set for {name}")
+                else: 
+                    print(f"Contact {name} not found.")
+            except IndexError as e:
+                print(e)
+                print("Invalid command format. Use 'show-birthday [name]'")
+
+    elif fuzz.ratio(cmd,"birthdays")>88:
+        
+        if fuzz.ratio(cmd,"birthdays")<100:
+            is_ok = input("Did you mean to enter 'birthdays [int]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"birthdays")==100 or is_ok == "y":
+            try:
+                if args:
+                    threshold=int(args[0])
+                    book.get_birthdays_per_week(threshold)
+                else:
+                    book.get_birthdays_per_week()
+            except ValueError as e:
+                print(e)
+                print("Invalid command format. Use 'birthdays [int]'")
+
+    elif fuzz.ratio(cmd,"add-note")>91:
+        
+        if fuzz.ratio(cmd,"add-note")<100:
+            is_ok = input("Did you mean to enter 'add-note [name] [birth date]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"add-note")==100 or is_ok == "y":    
+        
+            try:
+                name, *note = args
+                note = " ".join(note)
+                record = book.find(name)
+                if record:
+                    record.add_note(note)
+                    print(f"Note added for contact {name}")
+                else:
+                    print(f"Contact {name} not found")
+
+            except ValueError as e:
+                print(e)
+                print("Invalid command format. Use 'add-note [name] [note]'")
+
+    elif fuzz.ratio(cmd,"edit-note")>91:
+        
+        if fuzz.ratio(cmd,"edit-note")<100:
+            is_ok = input("Did you mean to enter 'edit-note [name] [birth date]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"edit-note")==100 or is_ok == "y":     
+            try:
+                name, *note = args
+                note = " ".join(note)
+                record = book.find(name)
+                if record:
+                    record.edit_note(note)
+                    print(f"Note edited for contact {name}")
+                else:
+                    print(f"Contact {name} not found")
+
+            except ValueError as e:
+                print(e)
+                print("Invalid command format. Use 'edit-note [name] [new note]")
+
+    elif fuzz.ratio(cmd,"remove-note")>91:
+        
+        if fuzz.ratio(cmd,"remove-note")<100:
+            is_ok = input("Did you mean to enter 'remove-note [name] [birth date]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"remove-note")==100 or is_ok == "y": 
+            try:
+                name = args[0]
+                record = book.find(name)
+                if record:
+                    record.remove_note()
+                    print(f"Note removed for contact {name}")
+                else:
+                    print(f"Contact {name} not found")
+
+            except ValueError as e:
+                print(e)
+                print("Invalid command format. Use 'remove-note [name]")
+
+    elif fuzz.ratio(cmd,"find_by_note")>91:
+        
+        if fuzz.ratio(cmd,"find_by_note")<100:
+            is_ok = input("Did you mean to enter 'find_by_note [name] [birth date]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"find_by_note")==100 or is_ok == "y": 
+            if args:
+                pattern = " ".join(args)
+                try:
+                    matching_contacts = book.find_by_note(pattern)
+                    if matching_contacts:
+                        print("Contacts with matching note content:")
+                        for name in matching_contacts:
+                            print(name)
+                    else:
+                        print("No contacts found with the given note content.")
+                except re.error as e:
+                    print(f"Invalid regex pattern: {e}")
+            else:
+                print("Invalid command format. Use 'find_by_note [regex pattern]'")
     
     elif cmd == "close" or cmd == "exit":
         book.save_to_file('addressbook.dat')
