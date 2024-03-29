@@ -55,6 +55,7 @@ class Record:
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
+        self.email =[]
         self.birthday = None
         self.note = None
 
@@ -85,7 +86,6 @@ class Record:
         birthday_str = f", Birthday: {self.birthday.value}" if self.birthday else ""
         note_str = f", Note: {self.note}" if self.note else ""
         return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{note_str}"
-
 
     def add_note(self, note):
         self.note = Note(note)
@@ -156,6 +156,30 @@ class AddressBook(UserDict):
                 matching_contacts.append(name)
         return matching_contacts
 
+    def find_by_item(self,item):
+        matching_contacts = []
+        for name, record in self.data.items():
+            if name == item:
+                matching_contacts.append(str(record))
+
+            if record.birthday:
+                print("dupa")
+                if record.birthday.value == item:
+                    matching_contacts.append(str(record))
+
+            if record.email:
+                print("dupa2")
+                for email in record.email:
+                    if email.value == item:
+                        matching_contacts.append(str(record))
+
+            if record.phones:
+                if record.find_phone(item):
+                    matching_contacts.append(str(record))
+        if matching_contacts:
+            for i in matching_contacts:
+                print(i)
+  
 
 
 #Function to load the address book from file
@@ -487,7 +511,20 @@ while True:
                     print(f"Invalid regex pattern: {e}")
             else:
                 print("Invalid command format. Use 'find_by_note [regex pattern]'")
-    
+
+    elif fuzz.ratio(cmd,"find_by_item")>91:
+        
+        if fuzz.ratio(cmd,"find_by_item")<100:
+            is_ok = input("Did you mean to enter 'find_by_item [name/birthday/email/number]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"find_by_item")==100 or is_ok == "y": 
+            try:
+                item = args[0]
+                book.find_by_item(item)
+            except IndexError as e:
+                print(e)
+                print("Invalid command format. Use 'find_by_item [name/birthday/email/number]'")
+
     elif cmd == "close" or cmd == "exit":
         book.save_to_file('addressbook.dat')
         print("Saving address book and closing the app.")
