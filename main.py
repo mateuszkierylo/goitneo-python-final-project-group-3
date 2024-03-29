@@ -4,8 +4,6 @@ import pickle
 from fuzzywuzzy import fuzz
 import re
 
-
-
 class Field:
     def __init__(self, value):
         self.value = value
@@ -43,6 +41,10 @@ class Birthday(Field):
             return True
         except ValueError:
             return False
+            
+class Note(Field):
+    def __init__(self, value):
+        super().__init__(value)
 
 class Record:
     def __init__(self, name):
@@ -88,9 +90,6 @@ class Record:
             self.note.value = note
         else:
             print("No note to edit. Please add a note first")
-
-    def search_note(self, index):
-        pass
 
     def remove_note(self):
         self.note = None
@@ -148,7 +147,7 @@ class AddressBook(UserDict):
     def find_by_note(self, pattern):
         matching_contacts = []
         for name, record in self.data.items():
-            if record.note and re.search(pattern, record.note, re.IGNORECASE):
+            if record.note and re.search(pattern, record.note, flags=re.IGNORECASE):
                 matching_contacts.append(name)
         return matching_contacts
 
