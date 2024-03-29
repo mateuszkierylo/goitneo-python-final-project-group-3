@@ -40,6 +40,10 @@ class Birthday(Field):
             return True
         except ValueError:
             return False
+            
+class Note(Field):
+    def __init__(self, value):
+        super().__init__(value)
 
 class Record:
     def __init__(self, name):
