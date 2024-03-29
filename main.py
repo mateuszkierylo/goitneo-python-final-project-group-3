@@ -33,11 +33,16 @@ class Birthday(Field):
         if self.validate_birthday(value):
             self.value = value
         else:
-            raise ValueError("Invalid birthday format. DD.MM.YYYY required")
+            raise ValueError("Invalid birthday: Date must be in the past and not more than 100 years ago, format DD.MM.YYYY required")
 
     def validate_birthday(self, birthday):
         try:
-            datetime.strptime(birthday, "%d.%m.%Y")
+            birthday_date = datetime.strptime(birthday, "%d.%m.%Y")
+            today = datetime.today()
+            if birthday_date > today:
+                return False
+            if today - birthday_date > timedelta(days=100*365.25):
+                return False
             return True
         except ValueError:
             return False
