@@ -146,7 +146,7 @@ class AddressBook(UserDict):
     def find_by_note(self, pattern):
         matching_contacts = []
         for name, record in self.data.items():
-            if record.note and re.search(pattern, record.note, re.IGNORECASE):
+            if record.note and re.search(pattern, record.note, flags=re.IGNORECASE):
                 matching_contacts.append(name)
         return matching_contacts
 
