@@ -255,38 +255,10 @@ book = load_address_book_from_file('addressbook.dat')
 
 #BOT
 
-def bot_command_handler():
-
-    while True:
-        user_input = input("Enter command: ").strip().lower()
-        args = user_input.split()
-
-        if args[0] == "exit":
-            print("Exiting...")
-            break
-        elif args[0] == "add":
-            # Handle adding new record with a note and optional tags
-            if len(args) >= 3:  # Simple validation
-                name, phone = args[1], args[2]
-                note = input("Enter note: ")
-                tags = input("Enter tags (comma-separated, no spaces): ").split(",")
-                record = Record(name)
-                record.add_phone(phone)
-                record.add_note(note, tags)
-                book.add_record(record)
-                print(f"Added {name} with note and tags.")
-        elif args[0] == "search_by_tag":
-            # Handle searching by tag
-            if len(args) == 2:
-                tag = args[1]
-                matching_records = book.search_by_tag(tag)
-                if matching_records:
-                    print("Found records:")
-                    for record in matching_records:
-                        print(record)
-                else:
-                    print("No records found with that tag.")
-
+while True:
+    user_input = input("Enter command: ").strip()
+    cmd, args = parse_input(user_input)
+    
     if fuzz.ratio(cmd,"add")>66:
         
         if fuzz.ratio(cmd,"add")<100:
@@ -340,7 +312,7 @@ def bot_command_handler():
                     record.edit_phone(record.phones[0].value, new_phone)
                     print(f"Phone number changed for contact {name}")
                 else:
-                    print(f"Contact not found")
+                    print("Contact not found")
             except ValueError as e:
                 print(e)
                 print("Invalid command format. Use 'change [name] [new phone]'")
@@ -599,7 +571,7 @@ def bot_command_handler():
                 print("Invalid command format. Use 'find_by_item [name/birthday/email/number]'")
 
     #FUZZ DO DODANIA:
-    
+
     elif cmd == "add-adress":
         try:
             name, adress = args
