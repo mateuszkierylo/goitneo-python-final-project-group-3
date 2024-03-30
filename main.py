@@ -28,7 +28,7 @@ class Phone(Field):
     def validate_phone(self, phone):
         return len(str(phone)) == 10
 
-class Adress(Field):
+class Address(Field):
     def __init__(self, value):
         self.value = value
 
@@ -86,17 +86,25 @@ class Note(Field):
 
 
 class Record:
+    
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
-        self.email =[]
+        self.email = []
         self.birthday = None
         self.note = None
-        self.adress = []
+        self.address = []  
 
-    def add_adress(self, adress):
-        self.adress.append(Adress(adress))
+    def add_address(self, address):
+        if self.address is None:
+            self.address =[]
+        self.address.append(Address(address))
     
+    def remove_address(self, address):
+        self.address = []
+        print(f"All addressess removed from contact {name}")
+    
+        
     def add_email(self,email):
         self.email.append(Email(email))
     
@@ -137,7 +145,7 @@ class Record:
     def __str__(self):
         phone_str = "; ".join(str(phone) for phone in self.phones) if self.phones else "No phones"
         birthday_str = f", Birthday: {self.birthday.value}" if self.birthday else ""
-        address_str = ", Addresses: " + ", ".join(str(address.value) for address in self.adress) if self.adress else ""
+        address_str = ", Addresses: " + ", ".join(str(address.value) for address in self.address) if self.address else ""
         note_str = f", Note: {self.note}" if self.note != "" else ""
         email_str = ", e-mail:" + ", ".join (str(email.value) for email in self.email) if self.email else ""
         return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{address_str}{email_str}{note_str}"
@@ -257,6 +265,7 @@ book = load_address_book_from_file('addressbook.dat')
 #BOT
 
 while True:
+    
     user_input = input("Enter command: ").strip()
     cmd, args = parse_input(user_input)
     
@@ -573,18 +582,32 @@ while True:
 
     #FUZZ DO DODANIA:
 
-    elif cmd == "add-adress":
+    elif cmd == "add-address":
         try:
-            name, adress = args
+            name = args[0]
+            address = " ".join(args[1:])  # Join all address components into a single string
             record = book.find(name)
             if record:
-                record.add_adress(adress)
+                record.add_address(address)
                 print(f"Address added to contact {name}")
             else:
                 print(f"Contact {name} not found") 
         except ValueError as e:
             print(e)
-            print("Invalid command format. '")
+            print("Invalid command format. Use 'add-address [name] [address]'")
+    
+    elif cmd == "remove-address":
+        try:
+            name, address = args
+            record = book.find(name)
+            if record:
+                record.remove_address(address)
+            else:
+                print(f"Contact {name} not found.")
+        except ValueError as e:
+            print(e)
+            print("Invalid command format. Use 'remove-address [name] [address]'")
+
 
     elif cmd == "add-email":
         try:
