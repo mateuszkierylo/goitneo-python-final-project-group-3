@@ -189,12 +189,10 @@ class AddressBook(UserDict):
                 matching_contacts.append(str(record))
 
             if record.birthday:
-                print("dupa")
                 if record.birthday.value == item:
                     matching_contacts.append(str(record))
 
             if record.email:
-                print("dupa2")
                 for email in record.email:
                     if email.value == item:
                         matching_contacts.append(str(record))
@@ -419,7 +417,7 @@ while True:
         if fuzz.ratio(cmd,"hello")<100:
             is_ok = input("Did you mean to enter 'hello'? (y//n): ").lower()
             
-        if fuzz.ratio(cmd,"birthdays")==100 or is_ok == "y":
+        if fuzz.ratio(cmd,"hello")==100 or is_ok == "y":
             print("Hello!")
 
     elif fuzz.ratio(cmd,"all")>66:
