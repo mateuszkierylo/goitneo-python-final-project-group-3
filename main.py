@@ -123,10 +123,10 @@ class Record:
                 self.phones.remove(phone)
 
     def __str__(self):
-        phone_str = "; ".join(str(phone) for phone in self.phones)
+        phone_str = "; ".join(str(phone) for phone in self.phones) if self.phones else "No phones"
         birthday_str = f", Birthday: {self.birthday.value}" if self.birthday else ""
         address_str = ", Addresses: " + ", ".join(str(address.value) for address in self.adress) if self.adress else ""
-        note_str = f", Note: {self.note}" if self.note else ""
+        note_str = f", Note: {self.note}" if self.note is not None else ""
         email_str = ", e-mail:" + ", ".join (str(email.value) for email in self.email) if self.email else ""
         return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{address_str}{email_str}{note_str}"
 
