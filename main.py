@@ -543,7 +543,7 @@ while True:
                     print(f"Contact {name} not found")
 
             except ValueError as e:
-                print(e)
+                
                 print("Invalid command format. Use 'remove-note [name]")
 
     elif fuzz.ratio(cmd,"find_by_note")>91:
@@ -577,25 +577,29 @@ while True:
                 item = args[0]
                 book.find_by_item(item)
             except IndexError as e:
-                print(e)
+                
                 print("Invalid command format. Use 'find_by_item [name/birthday/email/number]'")
 
-    #FUZZ DO DODANIA:
-
-    elif cmd == "add-address":
-        try:
-            name = args[0]
-            address = " ".join(args[1:])  # Join all address components into a single string
-            record = book.find(name)
-            if record:
-                record.add_address(address)
-                print(f"Address added to contact {name}")
-            else:
-                print(f"Contact {name} not found") 
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. Use 'add-address [name] [address]'")
     
+    elif fuzz.ratio(cmd,"add-address")>66:
+        
+        if fuzz.ratio(cmd,"add-address")<100:
+            is_ok = input("Did you mean to enter 'add-address'? (y//n): ").lower()
+
+        if fuzz.ratio(cmd,"add-address")==100 or is_ok == "y":
+            try:
+                name, address = args
+                address = " ".join(args[1:])  
+                record = book.find(name)
+                if record:
+                    record.add_address(address)
+                    print(f"Address added to contact {name}")
+                else:
+                    print(f"Contact {name} not found") 
+            except ValueError as e:
+                print("Invalid command format. Use 'add-address [name] [address]'")
+
+    #FUZZ DO DODANIA:
     elif cmd == "remove-address":
         try:
             name, address = args
@@ -605,8 +609,8 @@ while True:
             else:
                 print(f"Contact {name} not found.")
         except ValueError as e:
-            print(e)
-            print("Invalid command format. Use 'remove-address [name] [address]'")
+            
+            print("Invalid command format. Use 'remove-address [name] [address (you can provie first part of address).]'")
 
 
     elif cmd == "add-email":
