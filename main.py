@@ -524,7 +524,7 @@ while True:
                     print(f"Contact {name} not found")
 
             except ValueError as e:
-                print(e)
+                
                 print("Invalid command format. Use 'edit-note [name] [new note]")
 
     elif fuzz.ratio(cmd,"remove-note")>91:
@@ -546,12 +546,12 @@ while True:
                 
                 print("Invalid command format. Use 'remove-note [name]")
 
-    elif fuzz.ratio(cmd,"find_by_note")>91:
+    elif fuzz.ratio(cmd,"find-by-note")>91:
         
-        if fuzz.ratio(cmd,"find_by_note")<100:
+        if fuzz.ratio(cmd,"find-by-note")<100:
             is_ok = input("Did you mean to enter 'find_by_note [name] [birth date]'? (y//n): ").lower()
             
-        if fuzz.ratio(cmd,"find_by_note")==100 or is_ok == "y": 
+        if fuzz.ratio(cmd,"find-by-note")==100 or is_ok == "y": 
             if args:
                 pattern = " ".join(args)
                 try:
@@ -567,12 +567,12 @@ while True:
             else:
                 print("Invalid command format. Use 'find_by_note [regex pattern]'")
 
-    elif fuzz.ratio(cmd,"find_by_item")>91:
+    elif fuzz.ratio(cmd,"find-by-item")>91:
         
-        if fuzz.ratio(cmd,"find_by_item")<100:
+        if fuzz.ratio(cmd,"find-by-item")<100:
             is_ok = input("Did you mean to enter 'find_by_item [name/birthday/email/number]'? (y//n): ").lower()
             
-        if fuzz.ratio(cmd,"find_by_item")==100 or is_ok == "y": 
+        if fuzz.ratio(cmd,"find-by-item")==100 or is_ok == "y": 
             try:
                 item = args[0]
                 book.find_by_item(item)
@@ -581,15 +581,15 @@ while True:
                 print("Invalid command format. Use 'find_by_item [name/birthday/email/number]'")
 
     
-    elif fuzz.ratio(cmd,"add-address")>66:
-        
-        if fuzz.ratio(cmd,"add-address")<100:
-            is_ok = input("Did you mean to enter 'add-address'? (y//n): ").lower()
 
-        if fuzz.ratio(cmd,"add-address")==100 or is_ok == "y":
+    
+    elif cmd == "add-address":
+        if len(args) < 2:
+            print("Invalid command format. Use 'add-address [name] [address]'.")
+        else:
             try:
-                name, address = args
-                address = " ".join(args[1:])  
+                name = args[0]
+                address = " ".join(args[1:])  # Join all address components into a single string
                 record = book.find(name)
                 if record:
                     record.add_address(address)
@@ -597,7 +597,9 @@ while True:
                 else:
                     print(f"Contact {name} not found") 
             except ValueError as e:
+                print(e)
                 print("Invalid command format. Use 'add-address [name] [address]'")
+
 
     elif fuzz.ratio(cmd,"remove-address")>66:
 
@@ -617,20 +619,25 @@ while True:
                 
                 print("Invalid command format. Use 'remove-address [name] [address (you can provie first part of address).]'")
 
+    elif fuzz.ratio(cmd,"add-email")>66:
 
-    elif cmd == "add-email":
-        try:
-            name, email = args 
-            record = book.find(name)
-            if record:
-                record.add_email(email)
-                print(f"e-mail added to contact {name}")
-            else:
-                print(f"Contact {name} not found")
+        if fuzz.ratio(cmd,"add-email")<100:
+            is_ok = input("Did you mean to enter 'add-email'? (y//n): ").lower()
 
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. '")
+        if fuzz.ratio(cmd,"add-email")==100 or is_ok == "y":
+
+    
+            try:
+                name, email = args 
+                record = book.find(name)
+                if record:
+                    record.add_email(email)
+                    print(f"e-mail added to contact {name}")
+                else:
+                    print(f"Contact {name} not found")
+
+            except ValueError as e:
+                print("Invalid command format. '")
 
     elif cmd == "close" or cmd == "exit":
         book.save_to_file('addressbook.dat')
