@@ -599,18 +599,23 @@ while True:
             except ValueError as e:
                 print("Invalid command format. Use 'add-address [name] [address]'")
 
-    #FUZZ DO DODANIA:
-    elif cmd == "remove-address":
-        try:
-            name, address = args
-            record = book.find(name)
-            if record:
-                record.remove_address(address)
-            else:
-                print(f"Contact {name} not found.")
-        except ValueError as e:
-            
-            print("Invalid command format. Use 'remove-address [name] [address (you can provie first part of address).]'")
+    elif fuzz.ratio(cmd,"remove-address")>66:
+
+        if fuzz.ratio(cmd,"remove-address")<100:
+            is_ok = input("Did you mean to enter 'remove-address'? (y//n): ").lower()
+
+        if fuzz.ratio(cmd,"remove-address")==100 or is_ok == "y":
+   
+            try:
+                name, address = args
+                record = book.find(name)
+                if record:
+                    record.remove_address(address)
+                else:
+                    print(f"Contact {name} not found.")
+            except ValueError as e:
+                
+                print("Invalid command format. Use 'remove-address [name] [address (you can provie first part of address).]'")
 
 
     elif cmd == "add-email":
