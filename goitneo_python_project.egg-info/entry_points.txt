@@ -1,0 +1,2 @@
+[console_scripts]
+address-book = goitneo_python_project.main:main
