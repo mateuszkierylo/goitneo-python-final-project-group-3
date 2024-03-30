@@ -34,6 +34,12 @@ class Adress(Field):
     def __init__(self, value):
         self.value = value
     
+    
+    
+class Email(Field):
+    def __init__(self, value):
+        self.value = value
+
     def validate_email(self, email):
         pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if re.match(pattern, email):
@@ -41,12 +47,6 @@ class Adress(Field):
         else:
             raise ValueError("Invalid email. Please provide a correct email address")
         
-    
-class Email(Field):
-    def __init__(self, value):
-        self.value = value
-
-
 class Birthday(Field):
     def __init__(self, value):
         if self.validate_birthday(value):
