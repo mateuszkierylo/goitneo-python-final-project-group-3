@@ -589,7 +589,7 @@ while True:
         else:
             try:
                 name = args[0]
-                address = " ".join(args[1:])  # Join all address components into a single string
+                address = " ".join(args[1:])  
                 record = book.find(name)
                 if record:
                     record.add_address(address)
