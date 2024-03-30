@@ -48,6 +48,7 @@ class Birthday(Field):
             return False
             
 class Note(Field):
+
     def __init__(self, value, tags=None):
         super().__init__(value)
         self.tags = tags if tags else []
@@ -67,6 +68,7 @@ class Note(Field):
     def __str__(self):
         tags_str = ", ".join(self.tags) if self.tags else "No tags"
         return f"{self.value} [Tags: {tags_str}]"
+
 
 class Record:
     def __init__(self, name):
@@ -104,8 +106,10 @@ class Record:
         note_str = f", Note: {self.note}" if self.note else ""
         return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{note_str}"
 
+
     def add_note(self, note, tags=None):
         self.note = Note(note, tags)
+
 
     def edit_note(self, note):
         if self.note:
@@ -171,7 +175,6 @@ class AddressBook(UserDict):
                 matching_records.append(record)
         return matching_records
 
-    # new function 
     def find_by_note(self, pattern):
         matching_contacts = []
         for name, record in self.data.items():
@@ -232,6 +235,7 @@ book = load_address_book_from_file('addressbook.dat')
 
 
 #BOT
+
 def bot_command_handler():
 
     while True:
@@ -263,7 +267,6 @@ def bot_command_handler():
                         print(record)
                 else:
                     print("No records found with that tag.")
- 
 
 while True:
     user_input = input("Enter command: ").strip()
@@ -587,3 +590,4 @@ while True:
 
     else:
         print("Invalid command. Please try again")
+

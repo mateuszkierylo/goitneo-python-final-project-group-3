@@ -4,16 +4,12 @@ import pickle
 from fuzzywuzzy import fuzz
 import re
 
-
-
 class Field:
     def __init__(self, value):
         self.value = value
 
     def __str__(self):
         return str(self.value)
- 
-
 
 class Name(Field):
     def __init__(self, value):
@@ -37,19 +33,29 @@ class Birthday(Field):
         if self.validate_birthday(value):
             self.value = value
         else:
-            raise ValueError("Invalid birthday format. DD.MM.YYYY required")
+            raise ValueError("Invalid birthday: Date must be in the past and not more than 100 years ago, format DD.MM.YYYY required")
 
     def validate_birthday(self, birthday):
         try:
-            datetime.strptime(birthday, "%d.%m.%Y")
+            birthday_date = datetime.strptime(birthday, "%d.%m.%Y")
+            today = datetime.today()
+            if birthday_date > today:
+                return False
+            if today - birthday_date > timedelta(days=100*365.25):
+                return False
             return True
         except ValueError:
             return False
+            
+class Note(Field):
+    def __init__(self, value):
+        super().__init__(value)
 
 class Record:
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
+        self.email =[]
         self.birthday = None
         self.note = None
 
@@ -81,7 +87,6 @@ class Record:
         note_str = f", Note: {self.note}" if self.note else ""
         return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{note_str}"
 
-
     def add_note(self, note):
         self.note = Note(note)
 
@@ -90,9 +95,6 @@ class Record:
             self.note.value = note
         else:
             print("No note to edit. Please add a note first")
-
-    def search_note(self, index):
-        pass
 
     def remove_note(self):
         self.note = None
@@ -150,10 +152,34 @@ class AddressBook(UserDict):
     def find_by_note(self, pattern):
         matching_contacts = []
         for name, record in self.data.items():
-            if record.note and re.search(pattern, record.note, re.IGNORECASE):
+            if record.note and re.search(pattern, record.note, flags=re.IGNORECASE):
                 matching_contacts.append(name)
         return matching_contacts
 
+    def find_by_item(self,item):
+        matching_contacts = []
+        for name, record in self.data.items():
+            if name == item:
+                matching_contacts.append(str(record))
+
+            if record.birthday:
+                print("dupa")
+                if record.birthday.value == item:
+                    matching_contacts.append(str(record))
+
+            if record.email:
+                print("dupa2")
+                for email in record.email:
+                    if email.value == item:
+                        matching_contacts.append(str(record))
+
+            if record.phones:
+                if record.find_phone(item):
+                    matching_contacts.append(str(record))
+        if matching_contacts:
+            for i in matching_contacts:
+                print(i)
+  
 
 
 #Function to load the address book from file
@@ -485,7 +511,20 @@ while True:
                     print(f"Invalid regex pattern: {e}")
             else:
                 print("Invalid command format. Use 'find_by_note [regex pattern]'")
-    
+
+    elif fuzz.ratio(cmd,"find_by_item")>91:
+        
+        if fuzz.ratio(cmd,"find_by_item")<100:
+            is_ok = input("Did you mean to enter 'find_by_item [name/birthday/email/number]'? (y//n): ").lower()
+            
+        if fuzz.ratio(cmd,"find_by_item")==100 or is_ok == "y": 
+            try:
+                item = args[0]
+                book.find_by_item(item)
+            except IndexError as e:
+                print(e)
+                print("Invalid command format. Use 'find_by_item [name/birthday/email/number]'")
+
     elif cmd == "close" or cmd == "exit":
         book.save_to_file('addressbook.dat')
         print("Saving address book and closing the app.")
