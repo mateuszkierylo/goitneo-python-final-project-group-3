@@ -1,9 +1,0 @@
-setup.py
-goitneo_python_project/__init__.py
-goitneo_python_project/main.py
-goitneo_python_project/main_sciaga.py
-goitneo_python_project.egg-info/PKG-INFO
-goitneo_python_project.egg-info/SOURCES.txt
-goitneo_python_project.egg-info/dependency_links.txt
-goitneo_python_project.egg-info/entry_points.txt
-goitneo_python_project.egg-info/top_level.txt
