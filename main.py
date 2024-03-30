@@ -48,8 +48,27 @@ class Birthday(Field):
             return False
             
 class Note(Field):
-    def __init__(self, value):
+
+    def __init__(self, value, tags=None):
         super().__init__(value)
+        self.tags = tags if tags else []
+
+    def add_tag(self, tag):
+        if tag not in self.tags:
+            self.tags.append(tag)
+        else:
+            print("Tag already exists.")
+
+    def remove_tag(self, tag):
+        try:
+            self.tags.remove(tag)
+        except ValueError:
+            print("Tag not found.")
+
+    def __str__(self):
+        tags_str = ", ".join(self.tags) if self.tags else "No tags"
+        return f"{self.value} [Tags: {tags_str}]"
+
 
 class Record:
     def __init__(self, name):
@@ -87,8 +106,10 @@ class Record:
         note_str = f", Note: {self.note}" if self.note else ""
         return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{note_str}"
 
-    def add_note(self, note):
-        self.note = Note(note)
+
+    def add_note(self, note, tags=None):
+        self.note = Note(note, tags)
+
 
     def edit_note(self, note):
         if self.note:
@@ -147,8 +168,13 @@ class AddressBook(UserDict):
         else:
             print(f"No birthdays in the {threshold} days.")
 
-    
-    # new function 
+    def search_by_tag(self, tag):
+        matching_records = []
+        for record in self.data.values():
+            if record.note and tag in record.note.tags:
+                matching_records.append(record)
+        return matching_records
+
     def find_by_note(self, pattern):
         matching_contacts = []
         for name, record in self.data.items():
@@ -209,6 +235,38 @@ book = load_address_book_from_file('addressbook.dat')
 
 
 #BOT
+
+def bot_command_handler():
+
+    while True:
+        user_input = input("Enter command: ").strip().lower()
+        args = user_input.split()
+
+        if args[0] == "exit":
+            print("Exiting...")
+            break
+        elif args[0] == "add":
+            # Handle adding new record with a note and optional tags
+            if len(args) >= 3:  # Simple validation
+                name, phone = args[1], args[2]
+                note = input("Enter note: ")
+                tags = input("Enter tags (comma-separated, no spaces): ").split(",")
+                record = Record(name)
+                record.add_phone(phone)
+                record.add_note(note, tags)
+                book.add_record(record)
+                print(f"Added {name} with note and tags.")
+        elif args[0] == "search_by_tag":
+            # Handle searching by tag
+            if len(args) == 2:
+                tag = args[1]
+                matching_records = book.search_by_tag(tag)
+                if matching_records:
+                    print("Found records:")
+                    for record in matching_records:
+                        print(record)
+                else:
+                    print("No records found with that tag.")
 
 while True:
     user_input = input("Enter command: ").strip()
@@ -532,3 +590,4 @@ while True:
 
     else:
         print("Invalid command. Please try again")
+
