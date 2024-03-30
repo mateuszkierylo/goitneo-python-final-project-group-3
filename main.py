@@ -286,12 +286,12 @@ while True:
                 print(e)
                 print("Invalid command format. Use 'add [name] [phone]'")
 
-    elif fuzz.ratio(cmd,"remove_phone")>91:
+    elif fuzz.ratio(cmd,"remove-phone")>91:
         
-        if fuzz.ratio(cmd,"remove_phone")<100:
+        if fuzz.ratio(cmd,"remove-phone")<100:
             is_ok = input("Did you mean to enter 'remove-phone [name] [phone]'? (y//n): ").lower()
             
-        if fuzz.ratio(cmd,"remove_phone")==100 or is_ok == "y":  
+        if fuzz.ratio(cmd,"remove-phone")==100 or is_ok == "y":  
             try:
                 name, phone = args
                 record = book.find(name)
