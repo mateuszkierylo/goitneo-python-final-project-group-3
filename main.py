@@ -28,7 +28,7 @@ class Phone(Field):
     def validate_phone(self, phone):
         return len(str(phone)) == 10
 
-class Adress(Field):
+class Address(Field):
     def __init__(self, value):
         self.value = value
 
@@ -86,17 +86,25 @@ class Note(Field):
 
 
 class Record:
+    
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
-        self.email =[]
+        self.email = []
         self.birthday = None
         self.note = None
-        self.adress = []
+        self.address = []  
 
-    def add_adress(self, adress):
-        self.adress.append(Adress(adress))
+    def add_address(self, address):
+        if self.address is None:
+            self.address =[]
+        self.address.append(Address(address))
     
+    def remove_address(self, address):
+        self.address = []
+        print(f"All addressess removed from contact {name}")
+    
+        
     def add_email(self,email):
         self.email.append(Email(email))
     
@@ -137,7 +145,7 @@ class Record:
     def __str__(self):
         phone_str = "; ".join(str(phone) for phone in self.phones) if self.phones else "No phones"
         birthday_str = f", Birthday: {self.birthday.value}" if self.birthday else ""
-        address_str = ", Addresses: " + ", ".join(str(address.value) for address in self.adress) if self.adress else ""
+        address_str = ", Addresses: " + ", ".join(str(address.value) for address in self.address) if self.address else ""
         note_str = f", Note: {self.note}" if self.note != "" else ""
         email_str = ", e-mail:" + ", ".join (str(email.value) for email in self.email) if self.email else ""
         return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{address_str}{email_str}{note_str}"
@@ -257,6 +265,7 @@ book = load_address_book_from_file('addressbook.dat')
 #BOT
 
 while True:
+    
     user_input = input("Enter command: ").strip()
     cmd, args = parse_input(user_input)
     
@@ -277,12 +286,12 @@ while True:
                 print(e)
                 print("Invalid command format. Use 'add [name] [phone]'")
 
-    elif fuzz.ratio(cmd,"remove_phone")>91:
+    elif fuzz.ratio(cmd,"remove-phone")>91:
         
-        if fuzz.ratio(cmd,"remove_phone")<100:
+        if fuzz.ratio(cmd,"remove-phone")<100:
             is_ok = input("Did you mean to enter 'remove-phone [name] [phone]'? (y//n): ").lower()
             
-        if fuzz.ratio(cmd,"remove_phone")==100 or is_ok == "y":  
+        if fuzz.ratio(cmd,"remove-phone")==100 or is_ok == "y":  
             try:
                 name, phone = args
                 record = book.find(name)
@@ -515,7 +524,7 @@ while True:
                     print(f"Contact {name} not found")
 
             except ValueError as e:
-                print(e)
+                
                 print("Invalid command format. Use 'edit-note [name] [new note]")
 
     elif fuzz.ratio(cmd,"remove-note")>91:
@@ -534,15 +543,15 @@ while True:
                     print(f"Contact {name} not found")
 
             except ValueError as e:
-                print(e)
+                
                 print("Invalid command format. Use 'remove-note [name]")
 
-    elif fuzz.ratio(cmd,"find_by_note")>91:
+    elif fuzz.ratio(cmd,"find-by-note")>91:
         
-        if fuzz.ratio(cmd,"find_by_note")<100:
+        if fuzz.ratio(cmd,"find-by-note")<100:
             is_ok = input("Did you mean to enter 'find_by_note [name] [birth date]'? (y//n): ").lower()
             
-        if fuzz.ratio(cmd,"find_by_note")==100 or is_ok == "y": 
+        if fuzz.ratio(cmd,"find-by-note")==100 or is_ok == "y": 
             if args:
                 pattern = " ".join(args)
                 try:
@@ -558,72 +567,75 @@ while True:
             else:
                 print("Invalid command format. Use 'find_by_note [regex pattern]'")
 
-    elif fuzz.ratio(cmd,"find_by_item")>91:
+    elif fuzz.ratio(cmd,"find-by-item")>91:
         
-        if fuzz.ratio(cmd,"find_by_item")<100:
+        if fuzz.ratio(cmd,"find-by-item")<100:
             is_ok = input("Did you mean to enter 'find_by_item [name/birthday/email/number]'? (y//n): ").lower()
             
-        if fuzz.ratio(cmd,"find_by_item")==100 or is_ok == "y": 
+        if fuzz.ratio(cmd,"find-by-item")==100 or is_ok == "y": 
             try:
                 item = args[0]
                 book.find_by_item(item)
             except IndexError as e:
-                print(e)
+                
                 print("Invalid command format. Use 'find_by_item [name/birthday/email/number]'")
 
-    #FUZZ DO DODANIA:
-                
-        elif cmd == "add-note":
-        try:
-            name, *note_parts = args
-            note_text = " ".join(note_parts[:-1])
-            tags = note_parts[-1].split(",")
-            record = book.find(name)
-            if record:
-                record.add_note(note_text, tags)
-                print(f"Note with tags added to contact {name}.")
-            else:
-                print(f"Contact {name} not found.")
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. Use 'add-note [name] [note] [tag1,tag2,...]'")
-
-    elif cmd == "search-by-tag":
-        tag = " ".join(args)
-        matching_records = book.search_by_tag(tag)
-        if matching_records:
-            print("Contacts with matching tags:")
-            for record in matching_records:
-                print(record)
+    
+    elif cmd == "add-address":
+        if len(args) < 2:
+            print("Invalid command format. Use 'add-address [name] [address]'.")
         else:
-            print("No contacts found with the given tag.")
+            try:
+                name = args[0]
+                address = " ".join(args[1:])  
+                record = book.find(name)
+                if record:
+                    record.add_address(address)
+                    print(f"Address added to contact {name}")
+                else:
+                    print(f"Contact {name} not found") 
+            except ValueError as e:
+                print(e)
+                print("Invalid command format. Use 'add-address [name] [address]'")
 
-    elif cmd == "add-adress":
-        try:
-            name, adress = args
-            record = book.find(name)
-            if record:
-                record.add_adress(adress)
-                print(f"Address added to contact {name}")
-            else:
-                print(f"Contact {name} not found") 
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. '")
 
-    elif cmd == "add-email":
-        try:
-            name, email = args 
-            record = book.find(name)
-            if record:
-                record.add_email(email)
-                print(f"e-mail added to contact {name}")
-            else:
-                print(f"Contact {name} not found")
+    elif fuzz.ratio(cmd,"remove-address")>66:
 
-        except ValueError as e:
-            print(e)
-            print("Invalid command format. '")
+        if fuzz.ratio(cmd,"remove-address")<100:
+            is_ok = input("Did you mean to enter 'remove-address'? (y//n): ").lower()
+
+        if fuzz.ratio(cmd,"remove-address")==100 or is_ok == "y":
+   
+            try:
+                name, address = args
+                record = book.find(name)
+                if record:
+                    record.remove_address(address)
+                else:
+                    print(f"Contact {name} not found.")
+            except ValueError as e:
+                
+                print("Invalid command format. Use 'remove-address [name] [address (you can provie first part of address).]'")
+
+    elif fuzz.ratio(cmd,"add-email")>66:
+
+        if fuzz.ratio(cmd,"add-email")<100:
+            is_ok = input("Did you mean to enter 'add-email'? (y//n): ").lower()
+
+        if fuzz.ratio(cmd,"add-email")==100 or is_ok == "y":
+
+    
+            try:
+                name, email = args 
+                record = book.find(name)
+                if record:
+                    record.add_email(email)
+                    print(f"e-mail added to contact {name}")
+                else:
+                    print(f"Contact {name} not found")
+
+            except ValueError as e:
+                print("Invalid command format. '")
 
     elif cmd == "close" or cmd == "exit":
         book.save_to_file('addressbook.dat')
