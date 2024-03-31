@@ -581,8 +581,6 @@ while True:
                 print("Invalid command format. Use 'find_by_item [name/birthday/email/number]'")
 
     
-
-    
     elif cmd == "add-address":
         if len(args) < 2:
             print("Invalid command format. Use 'add-address [name] [address]'.")
