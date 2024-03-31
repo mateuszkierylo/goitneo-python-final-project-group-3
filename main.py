@@ -572,6 +572,31 @@ while True:
                 print("Invalid command format. Use 'find_by_item [name/birthday/email/number]'")
 
     #FUZZ DO DODANIA:
+                
+        elif cmd == "add-note":
+        try:
+            name, *note_parts = args
+            note_text = " ".join(note_parts[:-1])
+            tags = note_parts[-1].split(",")
+            record = book.find(name)
+            if record:
+                record.add_note(note_text, tags)
+                print(f"Note with tags added to contact {name}.")
+            else:
+                print(f"Contact {name} not found.")
+        except ValueError as e:
+            print(e)
+            print("Invalid command format. Use 'add-note [name] [note] [tag1,tag2,...]'")
+
+    elif cmd == "search-by-tag":
+        tag = " ".join(args)
+        matching_records = book.search_by_tag(tag)
+        if matching_records:
+            print("Contacts with matching tags:")
+            for record in matching_records:
+                print(record)
+        else:
+            print("No contacts found with the given tag.")
 
     elif cmd == "add-adress":
         try:
