@@ -1,34 +1,47 @@
-# goitneo-python-final-project-group-3
+Personal Assistant Application
+
+This is a Python-based Personal Assistant application designed to help users manage their contacts and notes conveniently. The application offers a range of features to streamline contact management and note-taking tasks.
+
+Features
+
+	1.	Store and Manage Contacts: Easily add, edit, and delete contacts with details such as names, addresses, phone numbers, emails, and birthdays.
+	2.	Search Contacts: Find contacts quickly by searching using various criteria, such as name.
+	3.	Display Upcoming Birthdays: View a list of contacts whose birthdays are approaching within a specified number of days from the current date.
+	4.	Validate Phone Numbers and Emails: Ensure correctness of entered phone numbers and emails and notify users of any errors.
+	5.	Store and Manage Notes: Add, edit, and delete text notes effortlessly.
+	6.	Search Notes: Quickly find notes using the search feature.
+	7.	Data Storage: All data, including contacts and notes, is stored securely on the hard disk in the user’s folder.
+	8.	Persistent Data: The application can be restarted without losing any stored data.
+	9.	Additional Features:
+	•	Add tags to notes for better organization.
+	•	Search and sort notes by tags.
+	•	Intelligent analysis to understand user commands and suggest relevant actions.
+	•	Proper validation for each field
 
 
-Basic requirements for a Personal Assistant:	
+Installation
 
-1. Store and manage contacts:Add new contacts with names, addresses, phone numbers, emails, and birthdays.	
-2. Search for contacts by various criteria (for example, by name).	
-3. Edit and delete contacts.	
-4. Display a list of contacts whose birthday is within a specified number of days from the current date.	
-5. Check the correctness of the entered phone number and email when creating or editing an entry and notify the user in case of an incorrect entry.	
-6. Store and manage your notes:Ability to add text notes.	
-7. Search by notes.	
-8. Edit and delete notes.	
-9. Data Storing: All data (contacts, notes) should be stored on the hard disk in the user folder.	
-10. The Assistant can be restarted without losing data.	
-11. Additional features	
-12. Storing and managing your notes:Ability to add tags to notes.	
-13. Search and sort notes by tags.	
-14. Intelligent analysis:The assistant should guess what the user wants it to do based on the text entered and offer the closest command to execute.	
+To install the application, simply clone the repository and follow the setup instructions provided in the repository’s README file.
 
-More requirements	:
+To install aplication clone git 
 
-15. Proper Readme.md file	
-16. The project is located in a public repository on GitHub (you can use an alternative such as GitLab or BitBucket).	
-17. The project can be installed as a Python package and called from anywhere in the system (optional).	
-18. There are no errors in the code when the application is executed.	
-19. Convenience and logic of the command line interface are implemented.
-20. Effective use of OOP, inheritance, and composition.	
-21. The program must correctly handle incorrect user input without closing.	
-22. The code should be clean, structured, and adhere to PEP 8 standards.	
-23. Correct implementation of validation for each field.	
-24. Presentation: clarity and content	
-25. Presentation: live demo	
-26. Presentation: Q&A	
+Usage
+
+After installation, run the application using the provided command-line interface. Follow the on-screen instructions to utilize the various features offered by the Personal Assistant application
+
+python main.py 
+
+Contributors
+
+	-	Mateusz Kieryło
+	-	Piotr Czechowski
+    -   Krzysztof Czerwienka
+    -   Edyta Pióro 
+    -   Krzysztof Ryś
+    -   Katarzyna Słowik 
+
+
+License
+
+This project is licensed under the MIT License.
+
