@@ -211,8 +211,12 @@ class AddressBook(UserDict):
     def find_by_note(self, pattern):
         matching_contacts = []
         for name, record in self.data.items():
-            if record.note and re.search(pattern, record.note, flags=re.IGNORECASE):
-                matching_contacts.append(name)
+            try:
+                if record.note and re.search(pattern, record.note.value, flags=re.IGNORECASE):
+                    matching_contacts.append(name)
+            except AttributeError:
+                # Ignorujemy rekordy bez notatek, ale możemy też tutaj dodać logowanie lub inną obsługę.
+                continue  # Kontynuujemy pętlę dla kolejnych rekordów
         return matching_contacts
 
     def find_by_item(self,item):
@@ -550,28 +554,26 @@ def main():
                     print("Invalid command format. Use 'remove-note [name]")
 
         elif fuzz.ratio(cmd,"find-by-note")>91:
-            
-            if fuzz.ratio(cmd,"find-by-note")<100:
-                is_ok = input("Did you mean to enter 'find_by_note [name] [note]'? (y//n): ").lower()
-                
-            if fuzz.ratio(cmd,"find-by-note")==100 or is_ok == "y": 
-                if args:
-                    pattern = " ".join(args)
-                    try:
-                        matching_contacts = book.find_by_note(pattern)
-                        if matching_contacts:
-                            print("Contacts with matching note content:")
-                            for name in matching_contacts:
-                                print(name)
-                        else:
-                            print("No contacts found with the given note content.")
-                    except re.error as e:
-                        print(f"Invalid regex pattern: {e}")
+    if fuzz.ratio(cmd,"find-by-note")<100:
+        is_ok = input("Did you mean to enter 'find_by_note [pattern]'? (y/n): ").lower()
+    if fuzz.ratio(cmd,"find-by-note")==100 or is_ok == "y": 
+        if args:
+            pattern = " ".join(args)
+            try:
+                matching_contacts = book.find_by_note(pattern)
+                if matching_contacts:
+                    print("Contacts with matching note content:")
+                    for name in matching_contacts:
+                        print(name)
                 else:
-                    print("Invalid command format. Use 'find_by_note [regex pattern]'")
+                    print("No contacts found with the given note content.")
+            except re.error as e:
+                print(f"Invalid regex pattern: {e}")
+        else:
+            print("Invalid command format. Use 'find_by_note [regex pattern]'")
+            
 
         elif fuzz.ratio(cmd,"find-by-item")>91:
-            
             if fuzz.ratio(cmd,"find-by-item")<100:
                 is_ok = input("Did you mean to enter 'find_by_item [name/birthday/email/number]'? (y//n): ").lower()
                 
