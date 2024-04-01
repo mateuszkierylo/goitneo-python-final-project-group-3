@@ -554,24 +554,25 @@ def main():
                     print("Invalid command format. Use 'remove-note [name]")
 
         elif fuzz.ratio(cmd,"find-by-note")>91:
-    if fuzz.ratio(cmd,"find-by-note")<100:
-        is_ok = input("Did you mean to enter 'find_by_note [pattern]'? (y/n): ").lower()
-    if fuzz.ratio(cmd,"find-by-note")==100 or is_ok == "y": 
-        if args:
-            pattern = " ".join(args)
-            try:
-                matching_contacts = book.find_by_note(pattern)
-                if matching_contacts:
-                    print("Contacts with matching note content:")
-                    for name in matching_contacts:
-                        print(name)
+            if fuzz.ratio(cmd,"find-by-note")<100:
+                is_ok = input("Did you mean to enter 'find_by_note [pattern]'? (y/n): ").lower()
+
+            if fuzz.ratio(cmd,"find-by-note")==100 or is_ok == "y": 
+                if args:
+                    pattern = " ".join(args)
+                    try:
+                        matching_contacts = book.find_by_note(pattern)
+                        if matching_contacts:
+                            print("Contacts with matching note content:")
+                            for name in matching_contacts:
+                                print(name)
+                        else:
+                            print("No contacts found with the given note content.")
+                    except re.error as e:
+                        print(f"Invalid regex pattern: {e}")
                 else:
-                    print("No contacts found with the given note content.")
-            except re.error as e:
-                print(f"Invalid regex pattern: {e}")
-        else:
-            print("Invalid command format. Use 'find_by_note [regex pattern]'")
-            
+                    print("Invalid command format. Use 'find_by_note [regex pattern]'")
+                    
 
         elif fuzz.ratio(cmd,"find-by-item")>91:
             if fuzz.ratio(cmd,"find-by-item")<100:
