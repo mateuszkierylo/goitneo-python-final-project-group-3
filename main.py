@@ -586,23 +586,27 @@ def main():
                     
                     print("Invalid command format. Use 'find_by_item [name/birthday/email/number]'")
 
-        
-        elif cmd == "add-address":
-            if len(args) < 2:
-                print("Invalid command format. Use 'add-address [name] [address]'.")
-            else:
-                try:
-                    name = args[0]
-                    address = " ".join(args[1:])  
-                    record = book.find(name)
-                    if record:
-                        record.add_address(address)
-                        print(f"Address added to contact {name}")
-                    else:
-                        print(f"Contact {name} not found") 
-                except ValueError as e:
-                    print(e)
-                    print("Invalid command format. Use 'add-address [name] [address]'")
+
+        elif fuzz.ratio(cmd,"add-address")>90:
+            if fuzz.ratio(cmd,"add-address")<100:
+                is_ok = input("Did you mean to enter 'add-address [name] [address]'? (y/n): ").lower()
+
+            if fuzz.ratio(cmd,"add-address")==100 or is_ok == "y":        
+                if len(args) < 2:
+                    print("Invalid command format. Use 'add-address [name] [address]'.")
+                else:
+                    try:
+                        name = args[0]
+                        address = " ".join(args[1:])  
+                        record = book.find(name)
+                        if record:
+                            record.add_address(address)
+                            print(f"Address added to contact {name}")
+                        else:
+                            print(f"Contact {name} not found") 
+                    except ValueError as e:
+                        print(e)
+                        print("Invalid command format. Use 'add-address [name] [address]'")
 
 
         elif fuzz.ratio(cmd,"remove-address")>66:
