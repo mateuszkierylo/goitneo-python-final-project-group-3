@@ -102,7 +102,7 @@ class Record:
     
     def remove_address(self, address):
         self.address = []
-        print(f"All addressess removed from contact {name}")
+        print(f"All addressess removed from contact")
     
         
     def add_email(self,email):
