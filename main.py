@@ -74,17 +74,6 @@ class Note(Field):
         else:
             print("Tag already exists.")
 
-    def remove_tag(self, tag):
-        try:
-            self.tags.remove(tag)
-        except ValueError:
-            print("Tag not found.")
-
-    def __str__(self):
-        tags_str = ", ".join(self.tags) if self.tags else "No tags"
-        return f"{self.value} [Tags: {tags_str}]"
-
-
 class Record:
     
     def __init__(self, name):
@@ -146,9 +135,10 @@ class Record:
         phone_str = "; ".join(str(phone) for phone in self.phones) if self.phones else "No phones"
         birthday_str = f", Birthday: {self.birthday.value}" if self.birthday else ""
         address_str = ", Addresses: " + ", ".join(str(address.value) for address in self.address) if self.address else ""
-        note_str = f", Note: {self.note}" if self.note != "" else ""
+        note_str = f", Note: {self.note}, " if self.note != "" else ""
         email_str = ", e-mail:" + ", ".join (str(email.value) for email in self.email) if self.email else ""
-        return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{address_str}{email_str}{note_str}"
+        tag_str = f", Tags: {', '.join(self.note.tags)}" if self.note and self.note.tags else "Tags: no tags"
+        return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{address_str}{email_str}{note_str}{tag_str}"
 
 class AddressBook(UserDict):
     def add_record(self, record):
