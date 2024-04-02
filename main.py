@@ -150,9 +150,6 @@ class Record:
         email_str = ", e-mail:" + ", ".join (str(email.value) for email in self.email) if self.email else ""
         return f"Contact name: {self.name.value}, Phones: {phone_str}{birthday_str}{address_str}{email_str}{note_str}"
 
-
-
-
 class AddressBook(UserDict):
     def add_record(self, record):
         self.data[record.name.value] = record
@@ -201,6 +198,11 @@ class AddressBook(UserDict):
         else:
             print(f"No birthdays in the {threshold} days.")
 
+    def add_tag_to_note(self, name, tag):
+        record = self.find(name)
+        if record and record.note:
+            record.note.add_tag(tag)
+
     def search_by_tag(self, tag):
         matching_records = []
         for record in self.data.values():
@@ -215,8 +217,7 @@ class AddressBook(UserDict):
                 if record.note and re.search(pattern, record.note.value, flags=re.IGNORECASE):
                     matching_contacts.append(name)
             except AttributeError:
-                # Ignorujemy rekordy bez notatek, ale możemy też tutaj dodać logowanie lub inną obsługę.
-                continue  # Kontynuujemy pętlę dla kolejnych rekordów
+                continue 
         return matching_contacts
 
     def find_by_item(self,item):
@@ -647,6 +648,43 @@ def main():
                 except ValueError as e:
                     print("Invalid command format. '")
 
+        
+        elif fuzz.ratio(cmd, "add-tag") > 91:
+            if fuzz.ratio(cmd, "add-tag") < 100:
+                is_ok = input("Did you mean to enter 'add-tag [name] [tag]'? (y/n): ").lower()
+
+            if fuzz.ratio(cmd, "add-tag") == 100 or is_ok == "y":
+                try:
+                    name, tag = args
+                    record = book.find(name)
+                    if record and record.note:
+                        record.note.add_tag(tag)
+                        print(f"Tag '{tag}' added to note for contact {name}.")
+                    else:
+                        print(f"Note for contact {name} not found or contact does not exist.")
+                except ValueError as e:
+                    print(e)
+                    print("Invalid command format. Use 'add-tag [name] [tag]'")
+
+       
+        elif fuzz.ratio(cmd, "search-by-tag") > 91:
+            if fuzz.ratio(cmd, "search-by-tag") < 100:
+                is_ok = input("Did you mean to enter 'search-by-tag [tag]'? (y/n): ").lower()
+
+            if fuzz.ratio(cmd, "search-by-tag") == 100 or is_ok == "y":
+                try:
+                    tag = args[0]
+                    matching_records = book.search_by_tag(tag)
+                    if matching_records:
+                        print(f"Found notes with tag '{tag}':")
+                        for record in matching_records:
+                            print(f"Contact {record.name.value}: {record.note}")
+                    else:
+                        print(f"No notes found with tag '{tag}'.")
+                except IndexError as e:
+                    print(e)
+                    print("Invalid command format. Use 'search-by-tag [tag]'")  
+
         elif cmd == "close" or cmd == "exit":
             book.save_to_file('addressbook.dat')
             print("Saving address book and closing the app.")
@@ -668,9 +706,11 @@ def main():
             print ("8. birhdays [number_days] - users who got birthdays from [number_days]")
             print ("9. NOTES: add-note [name], edit-note [name], remove-note [name] - adding, edit, remove notes from contact name")
             print ("10. find-by-item [item] - finding by item in address book")
-            print ("11. add-address [name] - adding addres to user name")
-            print ("12. save - saving data to file")
-            print ("12. close or exit - exit and save results")
+            print ("11. add-address [name] - adding address to user name")
+            print ("12. add-tag [name] [tag] - adding tag to user name")
+            print ("13. search-by-tag [tag] - search user by tag")
+            print ("14. save - saving data to file")
+            print ("15. close or exit - exit and save results")
 
         else:
             print("Invalid command. Please try again")
